@@ -11,4 +11,6 @@ router.post("/new", usersController.createUser);
 router.get("/:id", usersController.showUserDetails);
 router.put("/:id/edit", usersController.updateUser);
 
+/**Login */
+router.post("/login", usersController.loginValidation);
 module.exports = router;

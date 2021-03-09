@@ -24,7 +24,7 @@ const ProductSchema = mongoose.Schema({
     manufacturer: String,
     item_weight: Number,
     sku: Number,
-    date_Available: Date.now,
+    date_Available: Date,
     manufacturer_warranty: {
       hasWarranty: Boolean,
       warrantyLife: {

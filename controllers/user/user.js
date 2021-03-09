@@ -1,5 +1,7 @@
 const db = require("../../models/index.js");
-
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const jwtKey = process.env.TOKEN_SECRET;
 const index = async (req, res) => {
   try {
     const foundUsers = await db.User.find({});
@@ -44,6 +46,33 @@ const createUser = async (req, res) => {
       status: 500,
       message: error,
       requestedAt: new Date().toLocaleString(),
+    });
+  }
+};
+
+const loginValidation = async (req, res) => {
+  const user = await db.User.findOne({ username: req.body.username });
+  let match;
+  console.log(process.env.TOKEN_SECRET);
+
+  try {
+    match = await bcrypt.compare(req.body.password, user.password);
+
+    const accessToken = jwt.sign(
+      { username: user.username, role: user.role },
+      process.env.TOKEN_SECRET
+    );
+
+    if (match) {
+      res.json({ accessToken });
+    } else {
+      console.log("Line65 -- error in match ");
+      res.json({ message: "Erorr generating access token" });
+    }
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      message: "error",
     });
   }
 };
@@ -99,5 +128,6 @@ const usersController = {
   createUser,
   showUserDetails,
   updateUser,
+  loginValidation,
 };
 module.exports = usersController;
