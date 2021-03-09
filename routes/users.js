@@ -3,6 +3,7 @@ var router = express.Router();
 
 //Users Controller
 const usersController = require("../controllers/user/user");
+const authRequired = require("../middleware/authRequired");
 
 // Users
 /* GET users listing. */
@@ -13,4 +14,7 @@ router.put("/:id/edit", usersController.updateUser);
 
 /**Login */
 router.post("/login", usersController.loginValidation);
+router.post("/register", usersController.createUser);
+router.get("/profile", authRequired, usersController.profile);
+
 module.exports = router;

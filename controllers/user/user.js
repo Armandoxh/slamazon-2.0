@@ -51,23 +51,33 @@ const createUser = async (req, res) => {
 };
 
 const loginValidation = async (req, res) => {
-  const user = await db.User.findOne({ username: req.body.username });
   let match;
   console.log(process.env.TOKEN_SECRET);
 
+  const user = await db.User.findOne({ username: req.body.username });
+  if (!user) {
+    throw "User Not Found";
+  }
+
   try {
+    if (req.body.username === "" || req.body.password === "") {
+      throw "Empty Login Credentials";
+    }
+
     match = await bcrypt.compare(req.body.password, user.password);
 
-    const accessToken = jwt.sign(
-      { username: user.username, role: user.role },
-      process.env.TOKEN_SECRET
-    );
+    const accessToken = jwt.sign({ user }, process.env.TOKEN_SECRET, {
+      expiresIn: "12h",
+    });
 
     if (match) {
-      res.json({ accessToken });
+      res.status(200).json({
+        status: 200,
+        accessToken,
+        message: "Successfully Logged in",
+      });
     } else {
-      console.log("Line65 -- error in match ");
-      res.json({ message: "Erorr generating access token" });
+      res.json({ message: "Login Unsuccessful." });
     }
   } catch (error) {
     res.status(500).json({
@@ -91,6 +101,22 @@ const showUserDetails = async (req, res) => {
       status: 500,
       message: "Sorry something went wrong. Internal server Error",
       requestAt: new Date().toLocaleString(),
+    });
+  }
+};
+
+const profile = async (req, res) => {
+  try {
+    const user = await db.User.findById(req.user);
+
+    return res.status(200).json({
+      status: 200,
+      user,
+    });
+  } catch (error) {
+    return res.status(400).json({
+      status: 400,
+      message: "something went wrong",
     });
   }
 };
@@ -129,5 +155,6 @@ const usersController = {
   showUserDetails,
   updateUser,
   loginValidation,
+  profile,
 };
 module.exports = usersController;
