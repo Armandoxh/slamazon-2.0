@@ -5,7 +5,6 @@ const jwtKey = process.env.TOKEN_SECRET;
 const index = async (req, res) => {
   try {
     const foundUsers = await db.User.find({});
-    console.log("Found Users: ", foundUsers);
     res.status(200).json({
       status: 200,
       users: foundUsers,
@@ -52,14 +51,12 @@ const createUser = async (req, res) => {
 
 const loginValidation = async (req, res) => {
   let match;
-  console.log(process.env.TOKEN_SECRET);
 
   const user = await db.User.findOne({ username: req.body.username });
-  if (!user) {
-    throw "User Not Found";
-  }
-
+  console.log(req.body);
   try {
+    if (!user) throw "User Not Found";
+
     if (req.body.username === "" || req.body.password === "") {
       throw "Empty Login Credentials";
     }
