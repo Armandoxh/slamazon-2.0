@@ -10,6 +10,7 @@ const index = async (req, res) => {
       users: foundUsers,
       requestedAt: new Date().toLocaleString(),
     });
+    
   } catch (error) {
     console.log(error),
       res.status(500).json({

@@ -5,18 +5,22 @@ const ProductSchema = mongoose.Schema({
     type: String,
     required: [true, "Product Needs A Name"],
   },
+  
   price_USD: {
     type: Number,
     required: true,
   },
+
   img: {
     type: String,
     required: true,
   },
+
   description: {
     type: String,
     required: true,
   },
+
   specs: {
     product_depth: Number,
     product_height: Number,
